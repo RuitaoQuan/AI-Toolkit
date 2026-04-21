@@ -1,1 +1,6 @@
+test_api.py
 volcengine_credentials.py
+.env
+__pycache__/
+*.pyc
+.DS_Store
