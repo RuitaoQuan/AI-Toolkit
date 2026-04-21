@@ -1,0 +1,5 @@
+task_id,username,prompt,video_filename,size,created_at,status
+test_task_123,test_user,测试提示词：一只跳舞的猫,test_video.mp4,1048576,2026-04-16T19:57:50.728730,completed
+test_task_123,test_user,测试提示词：一只跳舞的猫,test_video.mp4,1048576,2026-04-16T19:57:59.950500,completed
+13985806214438420878,admin,一只橘猫在海边沙滩上奔跑，电影感运镜，阳光，真实质感,13985806214438420878.mp4,2496242,2026-04-21T16:44:04.735421,completed
+15837104317511479683,admin,"A cozy close-up shot of a reading nook at dusk. A boucle armchair with a chunky knit throw blanket draped over it. Next to it, a small wooden side table holds a steaming ceramic mug and a glowing warm lamp. The background is a soft-focus blurred view of a minimalist bookshelf. Extremely warm and inviting, soft textures, realistic fabric simulation, peaceful vibes, studio lighting.",15837104317511479683.mp4,1893733,2026-04-21T16:46:29.780588,completed

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - AI Toolkit</title>
+    <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --surface-color: rgba(30, 30, 30, 0.8);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-color: #ffd700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background: var(--surface-color);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 50px 30px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-header h1 {
+            font-size: 32px;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: border-color 0.3s;
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-color);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            display: none;
+            margin-bottom: 20px;
+            padding: 12px 15px;
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid rgba(255, 0, 0, 0.3);
+            border-radius: 8px;
+            color: #ff6b6b;
+            font-size: 14px;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .test-credentials {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .test-credentials p {
+            margin: 5px 0;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: var(--accent-color);
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🎬 AI Toolkit</h1>
+            <p>创意视频生成平台</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="输入用户名"
+                    required
+                    autocomplete="off"
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="输入密码"
+                    required
+                    autocomplete="off"
+                />
+            </div>
+
+            <button type="submit" class="login-btn" id="submitBtn">
+                登录
+            </button>
+
+            <div class="loading" id="loading">
+                登录中...
+            </div>
+        </form>
+
+        <div class="test-credentials">
+            <p><strong>测试凭证:</strong></p>
+            <p>用户名: admin &nbsp; 密码: admin123</p>
+            <p>用户名: user1 &nbsp; 密码: password123</p>
+            <p>用户名: test &nbsp; 密码: test123</p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = "http://127.0.0.1:8000";
+
+        function showError(message) {
+            const errorEl = document.getElementById("errorMessage");
+            errorEl.textContent = message;
+            errorEl.classList.add("show");
+        }
+
+        function clearError() {
+            const errorEl = document.getElementById("errorMessage");
+            errorEl.classList.remove("show");
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            clearError();
+
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const submitBtn = document.getElementById("submitBtn");
+            const loading = document.getElementById("loading");
+
+            if (!username || !password) {
+                showError("用户名或密码不能为空");
+                return;
+            }
+
+            // 显示加载状态
+            submitBtn.disabled = true;
+            loading.style.display = "block";
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    // 保存 token 和用户名到 localStorage
+                    localStorage.setItem("token", result.token);
+                    localStorage.setItem("username", result.username);
+                    
+                    // 跳转到主页
+                    window.location.href = "index.html";
+                } else {
+                    showError(result.message || "登录失败");
+                    submitBtn.disabled = false;
+                    loading.style.display = "none";
+                }
+            } catch (error) {
+                console.error("登录请求失败:", error);
+                showError("网络错误，请检查后端服务是否运行");
+                submitBtn.disabled = false;
+                loading.style.display = "none";
+            }
+        }
+
+        // 页面加载时检查：如果已登录，直接跳转到主页
+        window.addEventListener("load", () => {
+            const token = localStorage.getItem("token");
+            if (token) {
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+</body>
+</html>
