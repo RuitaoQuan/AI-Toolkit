@@ -4,3 +4,6 @@ volcengine_credentials.py
 __pycache__/
 *.pyc
 .DS_Store
+*.db
+backend/__pycache__/
+.vscode/

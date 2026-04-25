@@ -11,6 +11,9 @@
             --text-primary: #ffffff;
             --text-secondary: #a0a0a0;
             --accent-color: #ffd700;
+            --glass-highlight: rgba(255, 255, 255, 0.18);
+            --glass-shadow: rgba(0, 0, 0, 0.45);
+            --success-color: #77f2b5;
         }
 
         body {
@@ -176,39 +179,126 @@
             transform: translateX(-50%);
             width: 800px;
             max-width: 90%;
-            background: var(--surface-color);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
+            background:
+                radial-gradient(circle at top left, rgba(255, 215, 0, 0.14), transparent 40%),
+                linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04)),
+                rgba(24, 24, 24, 0.76);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.12);
             border-radius: 24px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 22px;
+            box-shadow:
+                0 18px 45px var(--glass-shadow),
+                inset 0 1px 0 rgba(255,255,255,0.08);
             z-index: 999;
+            overflow: hidden;
+        }
+
+        .progress-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.08) 35%, transparent 65%);
+            transform: translateX(-100%);
+            animation: panelShine 4s linear infinite;
+            pointer-events: none;
         }
 
         .progress-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 16px;
             color: var(--text-primary);
             font-weight: bold;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-kicker {
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.52);
+            margin-bottom: 6px;
+        }
+
+        .progress-title {
+            font-size: 20px;
+            line-height: 1.2;
+        }
+
+        .progress-stage-badge {
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: var(--text-primary);
+            font-size: 12px;
+            white-space: nowrap;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+
+        .progress-stage-badge::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: var(--accent-color);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+            animation: pulseDot 1.6s ease-in-out infinite;
         }
 
         .progress-bar-container {
             width: 100%;
-            height: 8px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 4px;
+            height: 12px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 999px;
             overflow: hidden;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255,255,255,0.08);
         }
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent-color), #ffed4e);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-            box-shadow: 0 0 10px rgba(255,215,0,0.5);
+            background: linear-gradient(90deg, #f6c453 0%, #ffd700 40%, #fff2a8 100%);
+            border-radius: 999px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 18px rgba(255,215,0,0.45);
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%);
+            animation: progressSweep 1.6s linear infinite;
+        }
+
+        .progress-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-percent {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .progress-hint {
+            font-size: 12px;
+            color: rgba(255,255,255,0.62);
         }
 
         .progress-prompt {
@@ -218,6 +308,23 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes panelShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes progressSweep {
+            0% { transform: translateX(-120%); }
+            100% { transform: translateX(120%); }
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.25); opacity: 1; }
         }
 
         /* 生成视频列表容器 */
@@ -300,6 +407,12 @@
             cursor: pointer;
             transition: background 0.2s;
             font-weight: bold;
+        }
+
+        .video-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none !important;
         }
 
         .video-btn-play {
@@ -528,11 +641,18 @@
     <!-- 进度条面板 -->
     <div id="progressPanel" class="progress-panel" style="display: none;">
         <div class="progress-header">
-            <span id="progressTitle">正在生成...</span>
-            <span id="progressPercent">0%</span>
+            <div>
+                <div class="progress-kicker">Seedance Waiting Room</div>
+                <div id="progressTitle" class="progress-title">正在准备画面...</div>
+            </div>
+            <div id="progressStage" class="progress-stage-badge">等待提交</div>
         </div>
         <div class="progress-bar-container">
             <div id="progressBar" class="progress-bar" style="width: 0%;"></div>
+        </div>
+        <div class="progress-meta">
+            <span id="progressPercent" class="progress-percent">0%</span>
+            <span id="progressHint" class="progress-hint">Prompt 已上传，正在创建任务队列</span>
         </div>
         <p id="progressPrompt" class="progress-prompt"></p>
     </div>
@@ -591,6 +711,26 @@
     <script>
         const API_BASE_URL = "http://127.0.0.1:8000"; // 后端地址
         let currentPrompt = null;  // save current prompt for completion modal
+        const statusLabelMap = {
+            pending: "等待提交",
+            submitted: "任务已提交",
+            processing: "处理中",
+            in_queue: "排队中",
+            generating: "生成中",
+            succeeded: "生成成功",
+            downloaded: "已完成",
+            failed: "生成失败"
+        };
+        const statusHintMap = {
+            pending: "Prompt 已上传，正在准备任务",
+            submitted: "任务已经进入服务器，等待分配算力",
+            processing: "模型开始理解场景与镜头语言",
+            in_queue: "队列中，马上开始生成",
+            generating: "Seedance 正在绘制关键帧与动态细节",
+            succeeded: "远端生成完成，正在整理结果",
+            downloaded: "视频已保存到本地历史",
+            failed: "这次生成没有成功，请修改提示词后重试"
+        };
 
         // 检查登录状态
         function checkAuth() {
@@ -712,6 +852,9 @@
             document.getElementById('progressPercent').textContent = '0%';
             document.getElementById('progressBar').style.width = '0%';
             document.getElementById('progressPrompt').textContent = prompt;
+            document.getElementById('progressTitle').textContent = '正在准备画面...';
+            document.getElementById('progressStage').textContent = statusLabelMap.pending;
+            document.getElementById('progressHint').textContent = statusHintMap.pending;
             
             console.log(`✨ 进度条已显示`);
             
@@ -738,6 +881,7 @@
                     currentPrompt = prompt;  // save for completion modal
                     task_store[currentTaskId] = { prompt };
                     console.log(`📤 任务已提交: ${currentTaskId}`);
+                    updateProgressUI(8, 'submitted');
                     
                     // 启动轮询
                     pollProgress();
@@ -776,8 +920,7 @@
                         const taskStatus = result.task_status;
                         
                         // 更新进度条
-                        document.getElementById('progressBar').style.width = progress + '%';
-                        document.getElementById('progressPercent').textContent = progress + '%';
+                        updateProgressUI(progress, taskStatus);
                         
                         console.log(`📊 进度: ${progress}% (${taskStatus})`);
                         
@@ -830,11 +973,10 @@
                             card.className = 'video-card';
                             const sizeText = video.size ? `${(video.size / (1024*1024)).toFixed(1)}MB` : '计算中';
                             const playDisabled = !video.url || !video.file_exists;
-                            const statusText = video.status === 'processing'
-                                ? '生成中'
-                                : video.status === 'failed'
-                                    ? '生成失败'
-                                    : sizeText;
+                            const statusText = ['pending', 'submitted', 'processing', 'in_queue', 'generating', 'succeeded', 'failed']
+                                .includes(video.status)
+                                ? `${statusLabelMap[video.status] || video.status} · ${Math.max(video.progress || 0, 0)}%`
+                                : sizeText;
                             card.innerHTML = `
                                 <div class="video-card-thumbnail">
                                     🎬
@@ -951,6 +1093,15 @@
         async function submitPrompt() {
             const prompt = document.getElementById('promptInput').value.trim();
             await startGeneration(prompt);
+        }
+
+        function updateProgressUI(progress, taskStatus) {
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressPercent').textContent = progress + '%';
+            document.getElementById('progressStage').textContent = statusLabelMap[taskStatus] || '处理中';
+            document.getElementById('progressTitle').textContent =
+                progress >= 100 ? '视频已经准备好了' : 'Seedance 正在生成你的视频';
+            document.getElementById('progressHint').textContent = statusHintMap[taskStatus] || statusHintMap.processing;
         }
 
         // 任务存储（用于显示完成弹窗中的提示词）
