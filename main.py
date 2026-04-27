@@ -322,10 +322,15 @@ async def health():
     return {"status": "ok"}
 
 
+app.mount("/", StaticFiles(directory=str(BASE_DIR), html=True), name="frontend")
+
+
 if __name__ == "__main__":
     import uvicorn
 
-    print("🚀 启动 FastAPI 服务器...")
-    print("📍 API 地址: http://127.0.0.1:8000")
+    print("🚀 启动完整应用服务器...")
+    print("📍 前端首页: http://127.0.0.1:8000/")
+    print("📍 登录页面: http://127.0.0.1:8000/login.html")
+    print("📍 API 地址: http://127.0.0.1:8000/api")
     print("📍 文档地址: http://127.0.0.1:8000/docs")
     uvicorn.run(app, host="127.0.0.1", port=8000)
